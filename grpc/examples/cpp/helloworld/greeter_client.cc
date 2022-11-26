@@ -21,6 +21,8 @@
 #include <string>
 #include <sstream>
 
+#include "RayTracing/RayTracer.hpp"
+
 #include <grpcpp/grpcpp.h>
 
 #ifdef BAZEL_BUILD
@@ -160,16 +162,20 @@ int main(int argc, char** argv) {
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
       
   if (argc > 1) {
-    cout << greeter.RenderImage(argv[1]) << endl;
+    ofstream myfile(argv[1]);
+    myfile << greeter.RenderImage(argv[1]) << endl;
+    myfile.close();
     return 0;
   }
   std::string user("world");
   std::string reply = greeter.SayHello(user);
   std::cout << "Greeter received: " << reply << std::endl;
+
+  RayTracer *tracer = new RayTracer();
   int line;
   while ((line = greeter.RequestTask()) >= 0) {
     std::stringstream ss;
-    ss << "test line content" << line << "\n";
+    ss << tracer->render(line) << "\n";
     std::string str = ss.str();
     greeter.SendResult(line, str);
     cout << "complete: " << line << endl;

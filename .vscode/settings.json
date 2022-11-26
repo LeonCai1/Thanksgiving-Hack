@@ -11,6 +11,9 @@
         "regex": "cpp",
         "iosfwd": "cpp",
         "__tree": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "algorithm": "cpp",
+        "__locale": "cpp",
+        "ios": "cpp"
     }
 }

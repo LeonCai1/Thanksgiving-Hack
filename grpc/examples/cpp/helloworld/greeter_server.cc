@@ -22,6 +22,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <sstream>
 
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
@@ -85,7 +86,7 @@ public:
     }
     string fullContent() {
         string res = "";
-        for (int i = 0; i < result.size(); i++) {
+        for (int i = result.size() - 1; i >= 0; i--) {
             res = res + result[i];
         }
         return res;
@@ -107,17 +108,26 @@ class GreeterServiceImpl final : public Greeter::Service {
         while (!taskManager->done()) {
             sleep(1);
         }
-        reply->set_pack(taskManager->fullContent());
+        stringstream myfile;
+        myfile << "P3\n" << 600 << " " << 400 << "\n255\n";
+        myfile << taskManager->fullContent();
+        reply->set_pack(myfile.str());
         return Status::OK;
     }
     
     Status RequestTask(ServerContext* context, const TaskRequest* request,
                        TaskResponse* reply) override {
+        if (this->taskManager == NULL) {
+          return Status::CANCELLED;
+        }
         reply->set_index(this->taskManager->nextLine());
         return Status::OK;
     }
     Status SendResult(ServerContext* context, const SendResultRequest* request,
                       SendResultResponse* reply) override {
+        if (this->taskManager == NULL) {
+          return Status::CANCELLED;
+        }
         this->taskManager->writeLine(request->index(), request->pack());
         return Status::OK;
     }
