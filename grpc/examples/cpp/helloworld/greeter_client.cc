@@ -172,6 +172,7 @@ int main(int argc, char** argv) {
     ss << "test line content" << line << "\n";
     std::string str = ss.str();
     greeter.SendResult(line, str);
+    cout << "complete: " << line << endl;
   }
 
   return 0;
