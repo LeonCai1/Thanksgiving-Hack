@@ -19,6 +19,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <sstream>
 
 #include <grpcpp/grpcpp.h>
 
@@ -34,7 +35,13 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
-
+using helloworld::RenderImageResponse;
+using helloworld::RenderImageRequest;
+using helloworld::TaskRequest;
+using helloworld::TaskResponse;
+using helloworld::SendResultRequest;
+using helloworld::SendResultResponse;
+using namespace std;
 class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
@@ -66,7 +73,57 @@ class GreeterClient {
       return "RPC failed";
     }
   }
+  string RenderImage(string file) {
+    RenderImageRequest request;
+    RenderImageResponse reply;
+    ClientContext context;
 
+    // The actual RPC.
+    Status status = stub_->RenderFile(&context, request, &reply);
+
+    // Act upon its status.
+    if (status.ok()) {
+      return reply.pack();
+    } else {
+      std::cout << status.error_code() << ": " << status.error_message()
+                << std::endl;
+      return "Failed";
+    }
+  }
+  int RequestTask() {
+    TaskRequest request;
+    TaskResponse reply;
+    ClientContext context;
+
+    // The actual RPC.
+    Status status = stub_->RequestTask(&context, request, &reply);
+
+    // Act upon its status.
+    if (status.ok()) {
+      return reply.index();
+    } else {
+      std::cout << status.error_code() << ": " << status.error_message()
+                << std::endl;
+      return -1;
+    }
+  }
+  void SendResult(int line, string result) {
+    SendResultRequest request;
+    SendResultResponse reply;
+    ClientContext context;
+    request.set_index(line);
+    request.set_pack(result);
+    // The actual RPC.
+    Status status = stub_->SendResult(&context, request, &reply);
+
+    // Act upon its status.
+    if (status.ok()) {
+
+    } else {
+      std::cout << status.error_code() << ": " << status.error_message()
+                << std::endl;
+    }
+  }
  private:
   std::unique_ptr<Greeter::Stub> stub_;
 };
@@ -78,31 +135,44 @@ int main(int argc, char** argv) {
   // We indicate that the channel isn't authenticated (use of
   // InsecureChannelCredentials()).
   std::string target_str;
-  std::string arg_str("--target");
-  if (argc > 1) {
-    std::string arg_val = argv[1];
-    size_t start_pos = arg_val.find(arg_str);
-    if (start_pos != std::string::npos) {
-      start_pos += arg_str.size();
-      if (arg_val[start_pos] == '=') {
-        target_str = arg_val.substr(start_pos + 1);
-      } else {
-        std::cout << "The only correct argument syntax is --target="
-                  << std::endl;
-        return 0;
-      }
-    } else {
-      std::cout << "The only acceptable argument is --target=" << std::endl;
-      return 0;
-    }
-  } else {
-    target_str = "localhost:50051";
-  }
+  // std::string arg_str("--target");
+  // if (argc > 1) {
+  //   std::string arg_val = argv[1];
+  //   size_t start_pos = arg_val.find(arg_str);
+  //   if (start_pos != std::string::npos) {
+  //     start_pos += arg_str.size();
+  //     if (arg_val[start_pos] == '=') {
+  //       target_str = arg_val.substr(start_pos + 1);
+  //     } else {
+  //       std::cout << "The only correct argument syntax is --target="
+  //                 << std::endl;
+  //       return 0;
+  //     }
+  //   } else {
+  //     std::cout << "The only acceptable argument is --target=" << std::endl;
+  //     return 0;
+  //   }
+  // } else {
+  //   target_str = "localhost:50051";
+  // }
+  target_str = "localhost:50051";
   GreeterClient greeter(
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
+      
+  if (argc > 1) {
+    cout << greeter.RenderImage(argv[1]) << endl;
+    return 0;
+  }
   std::string user("world");
   std::string reply = greeter.SayHello(user);
   std::cout << "Greeter received: " << reply << std::endl;
+  int line;
+  while ((line = greeter.RequestTask()) >= 0) {
+    std::stringstream ss;
+    ss << "test line content" << line << "\n";
+    std::string str = ss.str();
+    greeter.SendResult(line, str);
+  }
 
   return 0;
 }
