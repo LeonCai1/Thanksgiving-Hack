@@ -49,10 +49,10 @@ message TaskRequest {
   
 }
 message TaskResponse {
-   int32 lineIdx = 1;
+   int32 index = 1;
 }
 message SendResultRequest {
-  int32 lineIdx = 2;
+  int32 index = 2;
  string pack = 1;
 
 }

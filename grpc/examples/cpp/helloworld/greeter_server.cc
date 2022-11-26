@@ -15,10 +15,13 @@
  * limitations under the License.
  *
  */
+#include <unistd.h>
 
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
+#include <set>
 
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
@@ -29,7 +32,7 @@
 #else
 #include "helloworld.grpc.pb.h"
 #endif
-
+// #define IMAGE_LINE 400
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -37,15 +40,87 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
+using helloworld::RenderImageResponse;
+using helloworld::RenderImageRequest;
+using helloworld::TaskRequest;
+using helloworld::TaskResponse;
+using helloworld::SendResultRequest;
+using helloworld::SendResultResponse;
+using namespace std;
+class RenderTaskManager {
+    string file;
+    int totalLine = 400;
+    vector<string> result;
+    set<int> remaining;
+    set<int>::iterator current;
+public:
+    RenderTaskManager(string file) {
+        this->file = file;
+        for (int i = 0; i < 400; i++) {
+            result.push_back("");
+            remaining.insert(i);
+        }
+        current = remaining.begin();
+    }
+    int nextLine() {
+        if (remaining.empty()) {
+            return -1;
+        }
+        if (current == remaining.end()) {
+            current = remaining.begin();
+        }
+        int res = *current;
+        current++;
+        return res;
+    }
+    bool writeLine(int index, string line) {
+        result[index] = line;
+        if (remaining.count(index)) {
+            remaining.erase(remaining.find(index));
+        }
+        return true;
+    }
+    bool done() {
+        return remaining.empty();
+    }
+    string fullContent() {
+        string res = "";
+        for (int i = 0; i < result.size(); i++) {
+            res = res + result[i];
+        }
+        return res;
+    }
+};
 
 // Logic and data behind the server's behavior.
 class GreeterServiceImpl final : public Greeter::Service {
-  Status SayHello(ServerContext* context, const HelloRequest* request,
+    RenderTaskManager *taskManager = NULL;
+    Status SayHello(ServerContext* context, const HelloRequest* request,
                   HelloReply* reply) override {
-    std::string prefix("Hello ");
-    reply->set_message(prefix + request->name());
-    return Status::OK;
-  }
+        std::string prefix("Hello ");
+        reply->set_message(prefix + request->name());
+        return Status::OK;
+    }
+    Status RenderFile(ServerContext* context, const RenderImageRequest* request,
+                      RenderImageResponse* reply) override {
+        taskManager = new RenderTaskManager("1");
+        while (!taskManager->done()) {
+            sleep(1);
+        }
+        reply->set_pack(taskManager->fullContent());
+        return Status::OK;
+    }
+    
+    Status RequestTask(ServerContext* context, const TaskRequest* request,
+                       TaskResponse* reply) override {
+        reply->set_index(this->taskManager->nextLine());
+        return Status::OK;
+    }
+    Status SendResult(ServerContext* context, const SendResultRequest* request,
+                      SendResultResponse* reply) override {
+        this->taskManager->writeLine(request->index(), request->pack());
+        return Status::OK;
+    }
 };
 
 void RunServer() {
