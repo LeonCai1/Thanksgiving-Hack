@@ -6,3 +6,4 @@
 temp/
 build/
 .vscode/
+.vscode/settings.json
