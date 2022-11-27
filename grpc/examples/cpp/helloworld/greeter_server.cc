@@ -110,8 +110,8 @@ class GreeterServiceImpl final : public Greeter::Service {
   Status RenderFile(ServerContext* context, const RenderImageRequest* request,
                     RenderImageResponse* reply) override {
     // no event then cancelled
-    this.waitingLine.push(new RenderTaskManager("1")
-    
+    this->waitingLine.push(new RenderTaskManager("1"));
+
     while (!this->waitingLine.front()->done()) {
       sleep(1);
     }
