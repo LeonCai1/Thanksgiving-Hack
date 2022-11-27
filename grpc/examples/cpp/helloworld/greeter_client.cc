@@ -18,12 +18,12 @@
 
 #include <iostream>
 #include <memory>
-#include <string>
 #include <sstream>
+#include <string>
 
 // #include "GreeterClient.hpp"
-#include "Worker.hpp"
 #include "RayTracing/RayTracer.hpp"
+#include "Worker.hpp"
 
 #include <grpcpp/grpcpp.h>
 
@@ -39,12 +39,12 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
-using helloworld::RenderImageResponse;
 using helloworld::RenderImageRequest;
-using helloworld::TaskRequest;
-using helloworld::TaskResponse;
+using helloworld::RenderImageResponse;
 using helloworld::SendResultRequest;
 using helloworld::SendResultResponse;
+using helloworld::TaskRequest;
+using helloworld::TaskResponse;
 using namespace std;
 // class GreeterClient {
 //  public:
@@ -61,7 +61,8 @@ using namespace std;
 //     // Container for the data we expect from the server.
 //     HelloReply reply;
 
-//     // Context for the client. It could be used to convey extra information to
+//     // Context for the client. It could be used to convey extra information
+//     to
 //     // the server and/or tweak certain RPC behaviors.
 //     ClientContext context;
 
@@ -160,14 +161,23 @@ int main(int argc, char** argv) {
   //   target_str = "localhost:50051";
   // }
   target_str = "localhost:50051";
-  GreeterClient *greeter = new GreeterClient(
+  GreeterClient* greeter = new GreeterClient(
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
-      
+  int numThreads = 5;
   if (argc > 1) {
-    ofstream myfile(argv[1]);
-    myfile << greeter->RenderImage(argv[1]) << endl;
-    myfile.close();
-    return 0;
+    if (isdigit(atoi(argv[1]))) {
+      if (atoi(argv[1]) < 1) {
+        std::cout << "Number of Threads must be greater than 1";
+        return (EXIT_FAILURE);
+      } else {
+        numThreads = atoi(argv[1]);
+      }
+    } else {
+      ofstream myfile(argv[1]);
+      myfile << greeter->RenderImage(argv[1]) << endl;
+      myfile.close();
+      return 0;
+    }
   }
   std::string user("world");
   std::string reply = greeter->SayHello(user);
@@ -176,8 +186,9 @@ int main(int argc, char** argv) {
   // RayTracer *tracer = new RayTracer();
   // int line;
   int waitListSize = 3;
-  Worker *worker = new Worker(greeter, waitListSize);
-  while (worker->run());
+  Worker* worker = new Worker(greeter, waitListSize, numThreads);
+  while (worker->run())
+    ;
 
   return 0;
 }
