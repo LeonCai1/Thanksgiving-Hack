@@ -72,12 +72,12 @@ message RenderImageResponse {
   string pack = 1;
 }
 /**
-command client request 
+Depracted: command client request 
 **/
 
-// message ImageRequest {
+message ImageRequest {
 
-// }
-// message ImageResponse {
-//   string pack = 1;
-// }
+}
+message ImageResponse {
+  string pack = 1;
+}
