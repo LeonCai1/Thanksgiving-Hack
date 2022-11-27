@@ -3,11 +3,11 @@
 
 #include <iostream>
 #include <memory>
-#include <string>
 #include <sstream>
+#include <string>
 
-#include "Worker.hpp"
 #include "RayTracing/RayTracer.hpp"
+#include "Worker.hpp"
 
 #include <grpcpp/grpcpp.h>
 
@@ -23,12 +23,14 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
-using helloworld::RenderImageResponse;
+using helloworld::ImageRequest;
+using helloworld::ImageResponse;
 using helloworld::RenderImageRequest;
-using helloworld::TaskRequest;
-using helloworld::TaskResponse;
+using helloworld::RenderImageResponse;
 using helloworld::SendResultRequest;
 using helloworld::SendResultResponse;
+using helloworld::TaskRequest;
+using helloworld::TaskResponse;
 using namespace std;
 class GreeterClient {
  public:
@@ -106,12 +108,28 @@ class GreeterClient {
 
     // Act upon its status.
     if (status.ok()) {
-
     } else {
       std::cout << status.error_code() << ": " << status.error_message()
                 << std::endl;
     }
   }
+
+  void CommandImageRequest() {
+    ImageRequest request;
+    ImageResponse reply;
+    ClientContext context;
+    // The actual RPC.
+    Status status = stub_->CommandImageRequest(&context, request, &reply);
+    //
+    //
+    if (status.ok()) {
+      std::cout << "The work add already!";
+    } else {
+      std::cout << status.error_code() << ": " << status.error_message()
+                << std::endl;
+    }
+  }
+
  private:
   std::unique_ptr<Greeter::Stub> stub_;
 };

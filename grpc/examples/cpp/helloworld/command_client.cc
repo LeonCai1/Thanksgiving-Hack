@@ -39,8 +39,6 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
-using helloworld::ImageRequest;
-using helloworld::ImageResponse;
 using helloworld::RenderImageRequest;
 using helloworld::RenderImageResponse;
 using helloworld::SendResultRequest;
@@ -168,41 +166,23 @@ int main(int argc, char** argv) {
 
   std::string user("Trying to connect to server");
   std::string reply = greeter->SayHello(user);
-  std::cout << reply << std::endl;
+  std::cout << "Greeter received: " << reply << std::endl;
 
-  /**
-   * client input standard:
-   *    for worker client [address[], worker]
-   *    for command client [jsonfile input] later, rn it is empty
-   */
-  if (argc > 2 && strcmp(argv[2], "start") == 0) {  // worker client
-    reply = greeter->SayHello(argv[2]);             // test the name of worker
+  if (argc > 1) {
+    reply = greeter->SayHello(argv[1]);
     std::cout << "Greeter received: " << reply << "\n";
-    ofstream myfile(argv[2]);
-    myfile << greeter->RenderImage(argv[2]) << endl;
+    ofstream myfile(argv[1]);
+    myfile << greeter->RenderImage(argv[1]) << endl;
     myfile.close();
     return 0;
-    int numThreads = 5;
-    if (argc > 1) {
-      if (isdigit(atoi(argv[1]))) {
-        if (atoi(argv[1]) < 1) {
-          std::cout << "Number of Threads must be greater than 1";
-          return (EXIT_FAILURE);
-        } else {
-          numThreads = atoi(argv[1]);
-        }
-      }
-    }
-    std::string user("world");
-    std::string reply = greeter->SayHello(user);
-    std::cout << "Greeter received: " << reply << std::endl;
-
-    // RayTracer *tracer = new RayTracer();
-    // int line;
-    int waitListSize = 3;
-    Worker* worker = new Worker(greeter, waitListSize, numThreads);
-    while (worker->run())
-      ;
-
-    return 0;
   }
+
+  // RayTracer *tracer = new RayTracer();
+  // int line;
+  int waitListSize = 3;
+  Worker* worker = new Worker(greeter, waitListSize);
+  while (worker->run())
+    ;
+
+  return 0;
+}
