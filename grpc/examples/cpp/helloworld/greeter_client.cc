@@ -18,12 +18,12 @@
 
 #include <iostream>
 #include <memory>
-#include <string>
 #include <sstream>
+#include <string>
 
 // #include "GreeterClient.hpp"
-#include "Worker.hpp"
 #include "RayTracing/RayTracer.hpp"
+#include "Worker.hpp"
 
 #include <grpcpp/grpcpp.h>
 
@@ -39,12 +39,14 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
-using helloworld::RenderImageResponse;
+using helloworld::ImageRequest;
+using helloworld::ImageResponse;
 using helloworld::RenderImageRequest;
-using helloworld::TaskRequest;
-using helloworld::TaskResponse;
+using helloworld::RenderImageResponse;
 using helloworld::SendResultRequest;
 using helloworld::SendResultResponse;
+using helloworld::TaskRequest;
+using helloworld::TaskResponse;
 using namespace std;
 // class GreeterClient {
 //  public:
@@ -61,7 +63,8 @@ using namespace std;
 //     // Container for the data we expect from the server.
 //     HelloReply reply;
 
-//     // Context for the client. It could be used to convey extra information to
+//     // Context for the client. It could be used to convey extra information
+//     to
 //     // the server and/or tweak certain RPC behaviors.
 //     ClientContext context;
 
@@ -160,24 +163,36 @@ int main(int argc, char** argv) {
   //   target_str = "localhost:50051";
   // }
   target_str = "localhost:50051";
-  GreeterClient *greeter = new GreeterClient(
+  GreeterClient* greeter = new GreeterClient(
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
-      
-  if (argc > 1) {
-    ofstream myfile(argv[1]);
-    myfile << greeter->RenderImage(argv[1]) << endl;
+
+  std::string user("Trying to connect to server");
+  std::string reply = greeter->SayHello(user);
+  std::cout << reply << std::endl;
+
+  /**
+   * client input standard:
+   *    for worker client [address[], worker]
+   *    for command client [jsonfile input] later, rn it is empty
+   */
+  if (argc > 2 && strcmp(argv[2], "worker") == 0) {  // worker client
+    reply = greeter->SayHello(argv[2]);              // test the name of worker
+    std::cout << "Greeter received: " << reply << "\n";
+    ofstream myfile(argv[2]);
+    myfile << greeter->RenderImage(argv[2]) << endl;
     myfile.close();
     return 0;
+  } else if (argc > 1) {  // command client
+    greeter->CommandImageRequest();
+    return 0;
   }
-  std::string user("world");
-  std::string reply = greeter->SayHello(user);
-  std::cout << "Greeter received: " << reply << std::endl;
 
   // RayTracer *tracer = new RayTracer();
   // int line;
   int waitListSize = 3;
-  Worker *worker = new Worker(greeter, waitListSize);
-  while (worker->run());
+  Worker* worker = new Worker(greeter, waitListSize);
+  while (worker->run())
+    ;
 
   return 0;
 }
