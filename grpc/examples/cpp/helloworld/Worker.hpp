@@ -64,7 +64,7 @@ public:
         waitList.pop_front();
         m.unlock();
         std::stringstream ss;
-        ss << tracer->render(line) << "\n";
+        ss << tracer->render(line, 0) << "\n";
         std::string str = ss.str();
         rpc->SendResult(line, str);
         cout << "complete: " << line << endl;

@@ -135,7 +135,7 @@ class RayTracer {
             << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
             << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
     }
-    string render(int j) {
+    string render(int j, int index) {
         // insert code here...
         // printf(argv[0]);
         // ofstream myfile("img.ppm");
