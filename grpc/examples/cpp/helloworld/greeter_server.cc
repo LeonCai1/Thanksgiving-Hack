@@ -19,10 +19,11 @@
 
 #include <iostream>
 #include <memory>
-#include <string>
-#include <vector>
+#include <queue>
 #include <set>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 #include <grpcpp/grpcpp.h>
@@ -41,96 +42,118 @@ using grpc::Status;
 using helloworld::Greeter;
 using helloworld::HelloReply;
 using helloworld::HelloRequest;
-using helloworld::RenderImageResponse;
+using helloworld::ImageRequest;
+using helloworld::ImageResponse;
 using helloworld::RenderImageRequest;
-using helloworld::TaskRequest;
-using helloworld::TaskResponse;
+using helloworld::RenderImageResponse;
 using helloworld::SendResultRequest;
 using helloworld::SendResultResponse;
+using helloworld::TaskRequest;
+using helloworld::TaskResponse;
 using namespace std;
 class RenderTaskManager {
-    string file;
-    int totalLine = 400;
-    vector<string> result;
-    set<int> remaining;
-    set<int>::iterator current;
-public:
-    RenderTaskManager(string file) {
-        this->file = file;
-        for (int i = 0; i < 400; i++) {
-            result.push_back("");
-            remaining.insert(i);
-        }
-        current = remaining.begin();
+  string file;
+  int totalLine = 400;
+  vector<string> result;
+  set<int> remaining;
+  set<int>::iterator current;
+
+ public:
+  RenderTaskManager(string file) {
+    this->file = file;
+    for (int i = 0; i < 400; i++) {
+      result.push_back("");
+      remaining.insert(i);
     }
-    int nextLine() {
-        if (remaining.empty()) {
-            return -1;
-        }
-        if (current == remaining.end()) {
-            current = remaining.begin();
-        }
-        int res = *current;
-        current++;
-        return res;
+    current = remaining.begin();
+  }
+  int nextLine() {
+    if (remaining.empty()) {
+      return -1;
     }
-    bool writeLine(int index, string line) {
-        result[index] = line;
-        if (remaining.count(index)) {
-            remaining.erase(remaining.find(index));
-        }
-        return true;
+    if (current == remaining.end()) {
+      current = remaining.begin();
     }
-    bool done() {
-        return remaining.empty();
+    int res = *current;
+    current++;
+    return res;
+  }
+  bool writeLine(int index, string line) {
+    result[index] = line;
+    if (remaining.count(index)) {
+      remaining.erase(remaining.find(index));
     }
-    string fullContent() {
-        string res = "";
-        for (int i = result.size() - 1; i >= 0; i--) {
-            res = res + result[i];
-        }
-        return res;
+    return true;
+  }
+  bool done() { return remaining.empty(); }
+
+  string fullContent() {
+    string res = "";
+    for (int i = result.size() - 1; i >= 0; i--) {
+      res = res + result[i];
     }
+    return res;
+  }
 };
 
 // Logic and data behind the server's behavior.
 class GreeterServiceImpl final : public Greeter::Service {
-    RenderTaskManager *taskManager = NULL;
-    Status SayHello(ServerContext* context, const HelloRequest* request,
+  //   RenderTaskManager* taskManager = NULL;
+  queue<RenderTaskManager*> waitingLine;
+
+  Status SayHello(ServerContext* context, const HelloRequest* request,
                   HelloReply* reply) override {
-        std::string prefix("Hello ");
-        reply->set_message(prefix + request->name());
-        return Status::OK;
+    std::string prefix("Connection works");
+    reply->set_message(prefix + request->name());
+    return Status::OK;
+  }
+  Status RenderFile(ServerContext* context, const RenderImageRequest* request,
+                    RenderImageResponse* reply) override {
+    if (this->waitingLine.size() == 0) {  // no event then cancelled
+      return Status::CANCELLED;
     }
-    Status RenderFile(ServerContext* context, const RenderImageRequest* request,
-                      RenderImageResponse* reply) override {
-        taskManager = new RenderTaskManager("1");
-        while (!taskManager->done()) {
-            sleep(1);
-        }
-        stringstream myfile;
-        myfile << "P3\n" << 600 << " " << 400 << "\n255\n";
-        myfile << taskManager->fullContent();
-        reply->set_pack(myfile.str());
-        return Status::OK;
+    while (!this->waitingLine.front()->done()) {
+      sleep(1);
     }
-    
-    Status RequestTask(ServerContext* context, const TaskRequest* request,
-                       TaskResponse* reply) override {
-        if (this->taskManager == NULL) {
-          return Status::CANCELLED;
-        }
-        reply->set_index(this->taskManager->nextLine());
-        return Status::OK;
+    stringstream myfile;
+    myfile << "P3\n" << 600 << " " << 400 << "\n255\n";
+    myfile << this->waitingLine.front()->fullContent();
+    reply->set_pack(myfile.str());
+    this->waitingLine.pop();
+
+    return Status::OK;
+  }
+
+  Status RequestTask(ServerContext* context, const TaskRequest* request,
+                     TaskResponse* reply) override {
+    if (this->waitingLine.size() == 0) {  // no event then cancelled
+      return Status::CANCELLED;
     }
-    Status SendResult(ServerContext* context, const SendResultRequest* request,
-                      SendResultResponse* reply) override {
-        if (this->taskManager == NULL) {
-          return Status::CANCELLED;
-        }
-        this->taskManager->writeLine(request->index(), request->pack());
-        return Status::OK;
+    reply->set_index(this->waitingLine.front()->nextLine());
+    return Status::OK;
+  }
+  Status SendResult(ServerContext* context, const SendResultRequest* request,
+                    SendResultResponse* reply) override {
+    if (this->waitingLine.size() == 0) {
+      return Status::CANCELLED;
     }
+    this->waitingLine.front()->writeLine(request->index(), request->pack());
+    return Status::OK;
+  }
+
+  /**
+   * Recived Request from user or command client.
+   */
+  Status CommandImageRequest(ServerContext* context,
+                             const ImageRequest* request,
+                             ImageResponse* reply) override {
+    // change somewhere to a ip or wut
+    // reply->set_message("received render request from somewhere");
+
+    waitingLine.push(new RenderTaskManager("1"));
+    // reply->set_message("accept render request from somewhere");
+    return Status::OK;
+  }
 };
 
 void RunServer() {
