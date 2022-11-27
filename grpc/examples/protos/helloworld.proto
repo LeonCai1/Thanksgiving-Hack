@@ -30,6 +30,7 @@ service Greeter {
  rpc SendResult (SendResultRequest) returns (SendResultResponse) {}
   rpc SayHello (HelloRequest) returns (HelloReply) {}
   rpc SayHelloAgain (HelloRequest) returns (HelloReply){}
+  rpc CommandImageRequest(ImageRequest) returns (ImageResponse){}
 }
 
 
@@ -68,5 +69,15 @@ message RenderImageRequest {
 }
 
 message RenderImageResponse {
+  string pack = 1;
+}
+/**
+command client request 
+**/
+
+message ImageRequest {
+
+}
+message ImageResponse {
   string pack = 1;
 }
