@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
   // } else {
   //   target_str = "localhost:50051";
   // }
-  target_str = "localhost:50051";
+  target_str = "jacksonchenchong.com:50051";
   GreeterClient greeter(
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
       
