@@ -176,14 +176,11 @@ int main(int argc, char** argv) {
    *    for command client [jsonfile input] later, rn it is empty
    */
   if (argc > 2 && strcmp(argv[2], "start") == 0) {  // worker client
-    reply = greeter->SayHello(argv[2]);              // test the name of worker
+    reply = greeter->SayHello(argv[2]);             // test the name of worker
     std::cout << "Greeter received: " << reply << "\n";
     ofstream myfile(argv[2]);
     myfile << greeter->RenderImage(argv[2]) << endl;
     myfile.close();
-    return 0;
-  } else if (argc > 1) {  // command client
-    greeter->CommandImageRequest();
     return 0;
   }
 
