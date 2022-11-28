@@ -114,12 +114,13 @@ class GreeterClient {
     }
   }
 
-  void CommandImageRequest() {
+  string RayTracerGet() {
     ImageRequest request;
     ImageResponse reply;
     ClientContext context;
+    // RayTracer tracer = NULL;
     // The actual RPC.
-    Status status = stub_->CommandImageRequest(&context, request, &reply);
+    Status status = stub_->RayTracerGet(&context, request, &reply);
     //
     //
     if (status.ok()) {
@@ -128,6 +129,9 @@ class GreeterClient {
       std::cout << status.error_code() << ": " << status.error_message()
                 << std::endl;
     }
+    ImageResponse* p1 = &reply;
+
+    return p1->pack();
   }
 
  private:

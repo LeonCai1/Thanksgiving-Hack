@@ -92,9 +92,18 @@ int main(int argc, char** argv) {
   // RayTracer *tracer = new RayTracer();
   // int line;
   int waitListSize = 3;
-  Worker* worker = new Worker(greeter, waitListSize, numThreads);
+
+
+  string jsonStr = greeter->RayTracerGet();
+  /**
+   * Json parser and import into tracker
+   */
+  RayTracer* tracer = new RayTracer();
+  Worker* worker = new Worker(greeter, waitListSize, numThreads, tracer);
   while (worker->run())
     ;
 
+  delete tracer;
+  delete worker;
   return 0;
 }

@@ -14,6 +14,7 @@
 #include <thread>
 #include <unordered_map>
 
+
 #include "GreeterClient.hpp"
 #include "RayTracing/RayTracer.hpp"
 
@@ -44,16 +45,18 @@ class Worker {
   GreeterClient* rpc;
   int buffSize;
   int numThreads;
+
   RayTracer* tracer;
   deque<int> waitList;
   bool finished = false;
 
  public:
-  Worker(GreeterClient* rpc, int buffSize, int numThreads) {
+  Worker(GreeterClient* rpc, int buffSize, int numThreads, RayTracer* rayTracer) {
     this->rpc = rpc;
     this->buffSize = buffSize;
     this->numThreads = numThreads;
-    tracer = new RayTracer();
+    tracer = rayTracer;
+
   }
   bool run() {
     if (waitList.size() < buffSize) {
@@ -115,5 +118,4 @@ class Worker {
       ;
   }
 };
-
 #endif
