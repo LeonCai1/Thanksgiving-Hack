@@ -73,6 +73,8 @@ class Worker {
     int tl = length % numThreads == 0
                  ? length / numThreads
                  : (length / numThreads + 1);  //每个线程处理tl条数据
+    vector<thread> pool;
+
     for (int i = 0; i < numThreads; ++i) {
       int end = (i + 1) * tl;
       end = min(end, length);
@@ -80,13 +82,16 @@ class Worker {
       if (start >= end) {
         break;
       }
-      thread t(&RayTracer::render, tracer, line, i, start, end, std::ref(umap));
-      t.join();
+      pool.push_back(thread(&RayTracer::render, tracer, line, i, start, end,
+                            std::ref(umap)));
     }
+
     std::stringstream ss;
     for (int i = 0; i < numThreads; ++i) {
+      pool[i].join();
       ss << umap.at(i);
     }
+
     ss << "\n";
     std::string str = ss.str();
     rpc->SendResult(line, str);

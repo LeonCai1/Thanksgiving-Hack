@@ -166,7 +166,7 @@ class RayTracer {
       write_color(myfile, pixel_color, samples_per_pixel);
     }
 
-    std::cerr << "\nDone.\n";
+    std::cerr << start << " " << end << "\nDone.\n";
     umap[pid] = myfile.str();
   }
 };
