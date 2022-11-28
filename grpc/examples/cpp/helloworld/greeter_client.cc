@@ -23,6 +23,7 @@
 
 // #include "GreeterClient.hpp"
 #include "RayTracing/RayTracer.hpp"
+#include "RayTracing/nlohmann/json.hpp"
 #include "Worker.hpp"
 
 #include <grpcpp/grpcpp.h>
@@ -92,7 +93,6 @@ int main(int argc, char** argv) {
   // RayTracer *tracer = new RayTracer();
   // int line;
   int waitListSize = 3;
-
 
   string jsonStr = greeter->RayTracerGet();
   /**
