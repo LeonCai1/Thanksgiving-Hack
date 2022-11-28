@@ -1,5 +1,7 @@
 #ifndef WORKER_H
 #define WORKER_H
+#include <math.h>
+
 #include <algorithm>
 #include <deque>
 #include <future>
@@ -9,6 +11,9 @@
 #include <numeric>
 #include <sstream>
 #include <string>
+#include <thread>
+#include <unordered_map>
+
 
 #include "GreeterClient.hpp"
 #include "RayTracing/RayTracer.hpp"
@@ -39,15 +44,19 @@ class Worker {
   mutex m;
   GreeterClient* rpc;
   int buffSize;
+  int numThreads;
+
   RayTracer* tracer;
   deque<int> waitList;
   bool finished = false;
 
  public:
-  Worker(GreeterClient* rpc, int buffSize, RayTracer* rayTracer) {
+  Worker(GreeterClient* rpc, int buffSize, int numThreads, RayTracer* rayTracer) {
     this->rpc = rpc;
     this->buffSize = buffSize;
+    this->numThreads = numThreads;
     tracer = rayTracer;
+
   }
   bool run() {
     if (waitList.size() < buffSize) {
@@ -62,8 +71,31 @@ class Worker {
     int line = waitList.front();
     waitList.pop_front();
     m.unlock();
+    unordered_map<int, string> umap;
+    int length = tracer->image_width;
+    int tl = length % numThreads == 0
+                 ? length / numThreads
+                 : (length / numThreads + 1);  //每个线程处理tl条数据
+    vector<thread> pool;
+
+    for (int i = 0; i < numThreads; ++i) {
+      int end = (i + 1) * tl;
+      end = min(end, length);
+      int start = i * tl;
+      if (start >= end) {
+        break;
+      }
+      pool.push_back(thread(&RayTracer::render, tracer, line, i, start, end,
+                            std::ref(umap)));
+    }
+
     std::stringstream ss;
-    ss << tracer->render(line) << "\n";
+    for (int i = 0; i < numThreads; ++i) {
+      pool[i].join();
+      ss << umap.at(i);
+    }
+
+    ss << "\n";
     std::string str = ss.str();
     rpc->SendResult(line, str);
     cout << "complete: " << line << endl;
@@ -86,5 +118,4 @@ class Worker {
       ;
   }
 };
-
 #endif

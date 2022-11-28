@@ -72,22 +72,34 @@ int main(int argc, char** argv) {
   if (argc > 2 && strcmp(argv[2], "start") == 0) {  // worker client
     reply = greeter->SayHello(argv[2]);             // test the name of worker
     std::cout << "Greeter received: " << reply << "\n";
-    ofstream myfile(argv[2]);
-    myfile << greeter->RenderImage(argv[2]) << endl;
+    ofstream myfile(argv[1]);
+    myfile << greeter->RenderImage(argv[1]) << endl;
     myfile.close();
     return 0;
+  }
+  int numThreads = 5;
+  if (argc > 1) {
+    if (isdigit(atoi(argv[1]))) {
+      if (atoi(argv[1]) < 1) {
+        std::cout << "Number of Threads must be greater than 1";
+        return (EXIT_FAILURE);
+      } else {
+        numThreads = atoi(argv[1]);
+      }
+    }
   }
 
   // RayTracer *tracer = new RayTracer();
   // int line;
   int waitListSize = 3;
 
+
   string jsonStr = greeter->RayTracerGet();
   /**
    * Json parser and import into tracker
    */
   RayTracer* tracer = new RayTracer();
-  Worker* worker = new Worker(greeter, waitListSize, tracer);
+  Worker* worker = new Worker(greeter, waitListSize, numThreads, tracer);
   while (worker->run())
     ;
 
