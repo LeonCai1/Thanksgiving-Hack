@@ -178,8 +178,8 @@ int main(int argc, char** argv) {
   if (argc > 2 && strcmp(argv[2], "start") == 0) {  // worker client
     reply = greeter->SayHello(argv[2]);             // test the name of worker
     std::cout << "Greeter received: " << reply << "\n";
-    ofstream myfile(argv[2]);
-    myfile << greeter->RenderImage(argv[2]) << endl;
+    ofstream myfile(argv[1]);
+    myfile << greeter->RenderImage(argv[1]) << endl;
     myfile.close();
     return 0;
   }
