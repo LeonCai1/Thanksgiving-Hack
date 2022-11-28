@@ -1,0 +1,61 @@
+{
+  "id": 4,
+  "image": {
+    "render_info": 1,
+    "aspect_ration": 1.5,
+    "image_width": 600,
+    "sample_per_pixel": 50,
+    "max_depth": 50
+  },
+  "world": [
+    {
+      "sphere": {
+        "center": [0, -1000, 0],
+        "r": 1000,
+        "material": {
+          "mat": "lambertian",
+          "color": [0.5, 0.5, 0.5]
+        }
+      }
+    },
+    {
+      "sphere": {
+        "center": [0, 1, 0],
+        "r": 1.0,
+        "material": {
+          "mat": "dielectric",
+          "index_of_refraction": 1.5
+        }
+      }
+    },
+    {
+      "sphere": {
+        "center": [-4, 1, 0],
+        "r": 1.0,
+        "material": {
+          "mat": "lambertian",
+          "color": [0.4, 0.2, 0.1]
+        }
+      }
+    },
+    {
+      "sphere": {
+        "center": [4, 1, 0],
+        "r": 1.0,
+        "material": {
+          "mat": "metal",
+          "color": [0.7, 0.6, 0.5],
+          "fuzz": 0.0
+        }
+      }
+    }
+  ],
+  "camera": {
+    "lookfrom": [13, 2, 3],
+    "lookat": [0, 0, 0],
+    "vup": [0, 1, 0],
+    "vfov": 20,
+    "dist_to_focus": 10.0,
+    "aperture": 0.1
+  }
+}
