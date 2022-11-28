@@ -1,21 +1,24 @@
 #ifndef RAYTRACER_H
 #define RAYTRACER_H
 
-#include <sstream>
-#include <iostream>
-#include <fstream>
 #include <fcntl.h>
 #include <unistd.h>
+
+#include <fstream>
 #include <iostream>
-#include "color.hpp"
-#include "vec3.hpp"
+#include <sstream>
+#include <unordered_map>
+
+#include "Camra.h"
+#include "HittableList.hpp"
+#include "Material.h"
 #include "Ray.hpp"
 #include "Sphere.hpp"
+#include "color.hpp"
 #include "rtweekend.h"
 #include "HittableList.hpp"
 #include "Camra.h"
 #include "Material.h"
-#include <fstream>
 #include "nlohmann/json.hpp"
 
 using namespace std;
@@ -86,19 +89,18 @@ class RayTracer {
         auto c = oc.length_squared() - radius*radius;
         auto discriminant = half_b*half_b - a*c;
 
-        if (discriminant < 0) {
-            return -1.0;
-        } else {
-            return (-half_b - sqrt(discriminant) ) / a;
-        }
+    if (discriminant < 0) {
+      return -1.0;
+    } else {
+      return (-half_b - sqrt(discriminant)) / a;
     }
+  }
 
-    color ray_color(const ray& r, const hittable& world, int depth) {
-        hit_record rec;
+  color ray_color(const ray& r, const hittable& world, int depth) {
+    hit_record rec;
 
-        // If we've exceeded the ray bounce limit, no more light is gathered.
-        if (depth <= 0)
-            return color(0,0,0);
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if (depth <= 0) return color(0, 0, 0);
 
         if (world.hit(r, 0.001, infinity, rec)) {
             ray scattered;
@@ -121,53 +123,55 @@ class RayTracer {
     int samples_per_pixel = 30;
     int max_depth = 50;
 
-    camera *cam = NULL;
-    // World
+  camera* cam = NULL;
+  // World
 
-    hittable_list world;
+  hittable_list world;
 
-    void write_color(stringstream &out, color pixel_color, int samples_per_pixel) {
-        auto r = pixel_color.x();
-        auto g = pixel_color.y();
-        auto b = pixel_color.z();
+  void write_color(stringstream& out, color pixel_color,
+                   int samples_per_pixel) {
+    auto r = pixel_color.x();
+    auto g = pixel_color.y();
+    auto b = pixel_color.z();
 
-        // Divide the color by the number of samples and gamma-correct for gamma=2.0.
-        auto scale = 1.0 / samples_per_pixel;
-        r = sqrt(scale * r);
-        g = sqrt(scale * g);
-        b = sqrt(scale * b);
+    // Divide the color by the number of samples and gamma-correct for
+    // gamma=2.0.
+    auto scale = 1.0 / samples_per_pixel;
+    r = sqrt(scale * r);
+    g = sqrt(scale * g);
+    b = sqrt(scale * b);
 
-        // Write the translated [0,255] value of each color component.
-        out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
-            << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
-            << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
+    // Write the translated [0,255] value of each color component.
+    out << static_cast<int>(256 * clamp(r, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(g, 0.0, 0.999)) << ' '
+        << static_cast<int>(256 * clamp(b, 0.0, 0.999)) << '\n';
+  }
+  void render(int j, int pid, int start, int end,
+              unordered_map<int, string>& umap) {
+    // insert code here...
+    // printf(argv[0]);
+    // ofstream myfile("img.ppm");
+    stringstream myfile;
+    // Image
+
+    // Render
+
+    // myfile << "P3\n" << image_width << " " << image_height << "\n255\n";
+
+    for (int i = start; i < end; ++i) {
+      color pixel_color(0, 0, 0);
+      for (int s = 0; s < samples_per_pixel; ++s) {
+        auto u = (i + random_double()) / (image_width - 1);
+        auto v = (j + random_double()) / (image_height - 1);
+        ray r = cam->get_ray(u, v);
+        pixel_color += ray_color(r, world, max_depth);
+      }
+      write_color(myfile, pixel_color, samples_per_pixel);
     }
-    string render(int j) {
-        // insert code here...
-        // printf(argv[0]);
-        // ofstream myfile("img.ppm");
-        stringstream myfile;
-        // Image
-    
-        // Render
 
-        // myfile << "P3\n" << image_width << " " << image_height << "\n255\n";
-
-        for (int i = 0; i < image_width; ++i) {
-            color pixel_color(0, 0, 0);
-            for (int s = 0; s < samples_per_pixel; ++s) {
-                auto u = (i + random_double()) / (image_width-1);
-                auto v = (j + random_double()) / (image_height-1);
-                ray r = cam->get_ray(u, v);
-                pixel_color += ray_color(r, world, max_depth);            
-            }
-            write_color(myfile, pixel_color, samples_per_pixel);
-        }
-
-        std::cerr << "\nDone.\n";
-        return myfile.str();
-    }
+    std::cerr << start << " " << end << "\nDone.\n";
+    umap[pid] = myfile.str();
+  }
 };
-
 
 #endif
