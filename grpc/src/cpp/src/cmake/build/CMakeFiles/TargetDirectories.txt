@@ -1,0 +1,5 @@
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/src/cpp/src/cmake/build/CMakeFiles/hw_grpc_proto.dir
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/src/cpp/src/cmake/build/CMakeFiles/greeter_client.dir
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/src/cpp/src/cmake/build/CMakeFiles/greeter_server.dir
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/src/cpp/src/cmake/build/CMakeFiles/edit_cache.dir
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/src/cpp/src/cmake/build/CMakeFiles/rebuild_cache.dir
