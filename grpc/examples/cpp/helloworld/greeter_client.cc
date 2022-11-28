@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
   // int line;
   int waitListSize = 3;
 
-  String jsonStr = reeter->RayTracerGet();
+  string jsonStr = greeter->RayTracerGet();
   /**
    * Json parser and import into tracker
    */
@@ -92,5 +92,6 @@ int main(int argc, char** argv) {
     ;
 
   delete tracer;
-  delete worker return 0;
+  delete worker;
+  return 0;
 }
