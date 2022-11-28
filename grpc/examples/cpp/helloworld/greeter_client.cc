@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
     reply = greeter->SayHello(argv[2]);             // test the name of worker
     std::cout << "Greeter received: " << reply << "\n";
     ofstream myfile(argv[1]);
-    myfile << greeter->RenderImage(argv[2]) << endl;
+    myfile << greeter->RenderImage(argv[1]) << endl;
     myfile.close();
     return 0;
   }
