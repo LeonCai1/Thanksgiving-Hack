@@ -30,7 +30,7 @@
     },
     {
       "sphere": {
-        "center": [-4, 1, 0],
+        "center": [-2, 1, 0],
         "r": 1.0,
         "material": {
           "mat": "lambertian",
