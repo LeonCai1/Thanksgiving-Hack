@@ -48,92 +48,6 @@ using helloworld::SendResultResponse;
 using helloworld::TaskRequest;
 using helloworld::TaskResponse;
 using namespace std;
-// class GreeterClient {
-//  public:
-//   GreeterClient(std::shared_ptr<Channel> channel)
-//       : stub_(Greeter::NewStub(channel)) {}
-
-//   // Assembles the client's payload, sends it and presents the response back
-//   // from the server.
-//   std::string SayHello(const std::string& user) {
-//     // Data we are sending to the server.
-//     HelloRequest request;
-//     request.set_name(user);
-
-//     // Container for the data we expect from the server.
-//     HelloReply reply;
-
-//     // Context for the client. It could be used to convey extra information
-//     to
-//     // the server and/or tweak certain RPC behaviors.
-//     ClientContext context;
-
-//     // The actual RPC.
-//     Status status = stub_->SayHello(&context, request, &reply);
-
-//     // Act upon its status.
-//     if (status.ok()) {
-//       return reply.message();
-//     } else {
-//       std::cout << status.error_code() << ": " << status.error_message()
-//                 << std::endl;
-//       return "RPC failed";
-//     }
-//   }
-//   string RenderImage(string file) {
-//     RenderImageRequest request;
-//     RenderImageResponse reply;
-//     ClientContext context;
-
-//     // The actual RPC.
-//     Status status = stub_->RenderFile(&context, request, &reply);
-
-//     // Act upon its status.
-//     if (status.ok()) {
-//       return reply.pack();
-//     } else {
-//       std::cout << status.error_code() << ": " << status.error_message()
-//                 << std::endl;
-//       return "Failed";
-//     }
-//   }
-//   int RequestTask() {
-//     TaskRequest request;
-//     TaskResponse reply;
-//     ClientContext context;
-
-//     // The actual RPC.
-//     Status status = stub_->RequestTask(&context, request, &reply);
-
-//     // Act upon its status.
-//     if (status.ok()) {
-//       return reply.index();
-//     } else {
-//       std::cout << status.error_code() << ": " << status.error_message()
-//                 << std::endl;
-//       return -1;
-//     }
-//   }
-//   void SendResult(int line, string result) {
-//     SendResultRequest request;
-//     SendResultResponse reply;
-//     ClientContext context;
-//     request.set_index(line);
-//     request.set_pack(result);
-//     // The actual RPC.
-//     Status status = stub_->SendResult(&context, request, &reply);
-
-//     // Act upon its status.
-//     if (status.ok()) {
-
-//     } else {
-//       std::cout << status.error_code() << ": " << status.error_message()
-//                 << std::endl;
-//     }
-//   }
-//  private:
-//   std::unique_ptr<Greeter::Stub> stub_;
-// };
 
 int main(int argc, char** argv) {
   // Instantiate the client. It requires a channel, out of which the actual RPCs
@@ -142,26 +56,6 @@ int main(int argc, char** argv) {
   // We indicate that the channel isn't authenticated (use of
   // InsecureChannelCredentials()).
   std::string target_str;
-  // std::string arg_str("--target");
-  // if (argc > 1) {
-  //   std::string arg_val = argv[1];
-  //   size_t start_pos = arg_val.find(arg_str);
-  //   if (start_pos != std::string::npos) {
-  //     start_pos += arg_str.size();
-  //     if (arg_val[start_pos] == '=') {
-  //       target_str = arg_val.substr(start_pos + 1);
-  //     } else {
-  //       std::cout << "The only correct argument syntax is --target="
-  //                 << std::endl;
-  //       return 0;
-  //     }
-  //   } else {
-  //     std::cout << "The only acceptable argument is --target=" << std::endl;
-  //     return 0;
-  //   }
-  // } else {
-  //   target_str = "localhost:50051";
-  // }
   target_str = "localhost:50051";
   GreeterClient* greeter = new GreeterClient(
       grpc::CreateChannel(target_str, grpc::InsecureChannelCredentials()));
@@ -187,9 +81,16 @@ int main(int argc, char** argv) {
   // RayTracer *tracer = new RayTracer();
   // int line;
   int waitListSize = 3;
-  Worker* worker = new Worker(greeter, waitListSize);
+
+  String jsonStr = reeter->RayTracerGet();
+  /**
+   * Json parser and import into tracker
+   */
+  RayTracer* tracer = new RayTracer();
+  Worker* worker = new Worker(greeter, waitListSize, tracer);
   while (worker->run())
     ;
 
-  return 0;
+  delete tracer;
+  delete worker return 0;
 }

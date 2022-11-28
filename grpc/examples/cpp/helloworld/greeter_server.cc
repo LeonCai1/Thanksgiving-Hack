@@ -59,6 +59,7 @@ class RenderTaskManager {
   set<int>::iterator current;
 
  public:
+  string getFile() { return this->file; }
   RenderTaskManager(string file) {
     this->file = file;
     for (int i = 0; i < 400; i++) {
@@ -110,8 +111,8 @@ class GreeterServiceImpl final : public Greeter::Service {
   Status RenderFile(ServerContext* context, const RenderImageRequest* request,
                     RenderImageResponse* reply) override {
     // no event then cancelled
-    this->waitingLine.push(new RenderTaskManager("1"));
-
+    this->waitingLine.push(new RenderTaskManager(request->data()));
+    // this->jsonFiles.push()
     while (!this->waitingLine.front()->done()) {
       sleep(1);
     }
@@ -119,8 +120,8 @@ class GreeterServiceImpl final : public Greeter::Service {
     myfile << "P3\n" << 600 << " " << 400 << "\n255\n";
     myfile << this->waitingLine.front()->fullContent();
     reply->set_pack(myfile.str());
+    delete this->waitingLine.front();
     this->waitingLine.pop();
-
     return Status::OK;
   }
 
@@ -129,6 +130,7 @@ class GreeterServiceImpl final : public Greeter::Service {
     if (this->waitingLine.size() == 0) {  // no event then cancelled
       return Status::CANCELLED;
     }
+    // if(this->waitingLine.front()->)
     reply->set_index(this->waitingLine.front()->nextLine());
     return Status::OK;
   }
@@ -144,14 +146,15 @@ class GreeterServiceImpl final : public Greeter::Service {
   /**
    * Recived Request from user or command client.
    */
-  Status CommandImageRequest(ServerContext* context,
-                             const ImageRequest* request,
-                             ImageResponse* reply) override {
+  Status RayTracerGet(ServerContext* context, const ImageRequest* request,
+                      ImageResponse* reply) override {
     // change somewhere to a ip or wut
     // reply->set_message("received render request from somewhere");
 
-    waitingLine.push(new RenderTaskManager("1"));
     // reply->set_message("accept render request from somewhere");
+    reply->set_pack(this->waitingLine.size() == 0
+                        ? ""
+                        : this->waitingLine.front()->getFile());
     return Status::OK;
   }
 };
