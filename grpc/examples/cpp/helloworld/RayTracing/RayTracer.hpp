@@ -15,20 +15,70 @@
 #include "HittableList.hpp"
 #include "Camra.h"
 #include "Material.h"
+#include <fstream>
+#include "nlohmann/json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
+
 
 class RayTracer {
     public:
     RayTracer() {
-        world = random_scene();//Cam
-        point3 lookfrom(13,2,3);
-        point3 lookat(0,0,0);
-        vec3 vup(0,1,0);
-        auto dist_to_focus = 10.0;
-        auto aperture = 0.1;
-        cam = new camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+//        world = random_scene();//Cam
+//        point3 lookfrom(13,2,3);
+//        point3 lookat(0,0,0);
+//        vec3 vup(0,1,0);
+//        auto dist_to_focus = 10.0;
+//        auto aperture = 0.1;
+//        cam = new camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+         initializer("config.json");
     }
+
+    vec3 list2vec3(json list){
+      return vec3(list[0], list[1], list[2]);
+    }
+
+    auto get_material(json sph){
+      shared_ptr<material> result;
+      json mat = sph["material"];
+      json col = mat["color"];
+      std::string m = mat["mat"];
+      if(m == "lambertian"){
+        result = make_shared<lambertian>(color(list2vec3(col)));
+      }else if(m == "dielectric"){
+        result = make_shared<dielectric>(mat["index_of_refraction"]);
+      }else if(m == "metal"){
+        result = make_shared<metal>(color(list2vec3(col)), mat["fuzz"]);
+      }
+      return result;
+    }
+
+    bool initializer(string filename){
+      // Image
+      std::ifstream f(filename);
+      json data = json::parse(f);
+      json image_conf = data["image"];
+      json world_conf = data["world"];
+      json camera_conf = data["camera"];
+      aspect_ratio = image_conf["aspect_ration"];
+      image_width = image_conf["image_width"];
+      image_height = static_cast<int>(image_width / aspect_ratio);
+      samples_per_pixel = image_conf["sample_per_pixel"];
+      max_depth = image_conf["max_depth"];
+
+      // World
+      for (auto& el : world_conf){
+        auto sph = el["sphere"];
+        auto mat = get_material(sph);
+        json center = sph["center"];
+        world.add(make_shared<sphere>(list2vec3(center), sph["r"], mat));
+      }
+      // Camera
+      cam = new camera(list2vec3(camera_conf["lookfrom"]), list2vec3(camera_conf["lookat"]), list2vec3(camera_conf["vup"]), camera_conf["vfov"], aspect_ratio, camera_conf["aperture"], camera_conf["dist_to_focus"]);
+      return true;
+    }
+
     double hit_sphere(const point3& center, double radius, const ray& r) {
         vec3 oc = r.origin() - center;
         auto a = r.direction().length_squared();
@@ -61,58 +111,15 @@ class RayTracer {
         auto t = 0.5*(unit_direction.y() + 1.0);
         return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
     }
-    hittable_list random_scene() {
-        hittable_list world;
 
-        auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
-        world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
 
-//    for (int a = -5; a < 5; a++) {
-//        for (int b = -5; b < 5; b++) {
-//            auto choose_mat = random_double();
-//            point3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
-//
-//            if ((center - point3(4, 0.2, 0)).length() > 0.9) {
-//                shared_ptr<material> sphere_material;
-//
-//                if (choose_mat < 0.8) {
-//                    // diffuse
-//                    auto albedo = color::random() * color::random();
-//                    sphere_material = make_shared<lambertian>(albedo);
-//                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
-//                } else if (choose_mat < 0.95) {
-//                    // metal
-//                    auto albedo = color::random(0.5, 1);
-//                    auto fuzz = random_double(0, 0.5);
-//                    sphere_material = make_shared<metal>(albedo, fuzz);
-//                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
-//                } else {
-//                    // glass
-//                    sphere_material = make_shared<dielectric>(1.5);
-//                    world.add(make_shared<sphere>(center, 0.2, sphere_material));
-//                }
-//            }
-//        }
-//    }
-
-        auto material1 = make_shared<dielectric>(1.5);
-        world.add(make_shared<sphere>(point3(0, 1, 0), 1.0, material1));
-
-        auto material2 = make_shared<lambertian>(color(0.4, 0.2, 0.1));
-        world.add(make_shared<sphere>(point3(-4, 1, 0), 1.0, material2));
-
-        auto material3 = make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
-        world.add(make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
-
-        return world;
-    }
 
     //image
-    const float aspect_ratio = 1.5;
-    const int image_width = 600;
-    const int image_height = 400;
-    const int samples_per_pixel = 30;
-    const int max_depth = 50;
+    float aspect_ratio = 1.5;
+    int image_width = 600;
+    int image_height = 400;
+    int samples_per_pixel = 30;
+    int max_depth = 50;
 
     camera *cam = NULL;
     // World
