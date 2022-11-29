@@ -1,3 +1,0 @@
-/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-MlUI3S/CMakeFiles/cmTC_64e65.dir
-/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-MlUI3S/CMakeFiles/edit_cache.dir
-/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-MlUI3S/CMakeFiles/rebuild_cache.dir
