@@ -1,0 +1,1 @@
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=res_servicename CMakeFiles/cmTC_abb63.dir/CheckFunctionExists.c.o -o cmTC_abb63  -lresolv 
