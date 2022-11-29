@@ -1,0 +1,134 @@
+Determining if the function res_servicename exists failed with the following output:
+Change Dir: /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-griajx
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_543db/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_543db.dir/build.make CMakeFiles/cmTC_543db.dir/build
+Building C object CMakeFiles/cmTC_543db.dir/CheckFunctionExists.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=res_servicename -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -fPIE -MD -MT CMakeFiles/cmTC_543db.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_543db.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_543db.dir/CheckFunctionExists.c.o -c /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-griajx/CheckFunctionExists.c
+Linking C executable cmTC_543db
+/opt/homebrew/Cellar/cmake/3.25.0/bin/cmake -E cmake_link_script CMakeFiles/cmTC_543db.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=res_servicename -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_543db.dir/CheckFunctionExists.c.o -o cmTC_543db 
+Undefined symbols for architecture arm64:
+  "_res_servicename", referenced from:
+      _main in CheckFunctionExists.c.o
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make[1]: *** [cmTC_543db] Error 1
+make: *** [cmTC_543db/fast] Error 2
+
+
+
+Performing C SOURCE FILE Test IOS failed with the following output:
+Change Dir: /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-aXFTKl
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_5edce/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_5edce.dir/build.make CMakeFiles/cmTC_5edce.dir/build
+Building C object CMakeFiles/cmTC_5edce.dir/src.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -DIOS  -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -fPIE -MD -MT CMakeFiles/cmTC_5edce.dir/src.c.o -MF CMakeFiles/cmTC_5edce.dir/src.c.o.d -o CMakeFiles/cmTC_5edce.dir/src.c.o -c /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-aXFTKl/src.c
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-aXFTKl/src.c:6:2: error: Not an iPhone target
+#error Not an iPhone target
+ ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_5edce.dir/src.c.o] Error 1
+make: *** [cmTC_5edce/fast] Error 2
+
+
+Source file was:
+
+	#include <stdio.h>
+	#include <TargetConditionals.h>
+	int main() {
+#if TARGET_OS_IPHONE == 0
+#error Not an iPhone target
+#endif
+return 0;
+	}
+	
+
+Performing C SOURCE FILE Test IOS_V10 failed with the following output:
+Change Dir: /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-oWAFgM
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_aa1f0/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_aa1f0.dir/build.make CMakeFiles/cmTC_aa1f0.dir/build
+Building C object CMakeFiles/cmTC_aa1f0.dir/src.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -DIOS_V10  -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -fPIE -MD -MT CMakeFiles/cmTC_aa1f0.dir/src.c.o -MF CMakeFiles/cmTC_aa1f0.dir/src.c.o.d -o CMakeFiles/cmTC_aa1f0.dir/src.c.o -c /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-oWAFgM/src.c
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-oWAFgM/src.c:6:4: error: Not iOS v10
+#  error Not iOS v10
+   ^
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_aa1f0.dir/src.c.o] Error 1
+make: *** [cmTC_aa1f0/fast] Error 2
+
+
+Source file was:
+
+#include <stdio.h>
+#include <TargetConditionals.h>
+	int main() {
+#if TARGET_OS_IPHONE == 0 || __IPHONE_OS_VERSION_MIN_REQUIRED < 100000
+#  error Not iOS v10
+#endif
+return 0;
+	}
+	
+
+Determining if files malloc.h exist failed with the following output:
+Change Dir: /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-j16GYS
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_8586e/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_8586e.dir/build.make CMakeFiles/cmTC_8586e.dir/build
+Building C object CMakeFiles/cmTC_8586e.dir/HAVE_MALLOC_H.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -fPIE -MD -MT CMakeFiles/cmTC_8586e.dir/HAVE_MALLOC_H.c.o -MF CMakeFiles/cmTC_8586e.dir/HAVE_MALLOC_H.c.o.d -o CMakeFiles/cmTC_8586e.dir/HAVE_MALLOC_H.c.o -c /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-j16GYS/HAVE_MALLOC_H.c
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-j16GYS/HAVE_MALLOC_H.c:2:10: fatal error: 'malloc.h' file not found
+#include <malloc.h>
+         ^~~~~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_8586e.dir/HAVE_MALLOC_H.c.o] Error 1
+make: *** [cmTC_8586e/fast] Error 2
+
+
+Source:
+/* */
+#include <malloc.h>
+
+
+int main(void){return 0;}
+
+Determining if files socket.h exist failed with the following output:
+Change Dir: /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-Zk7LGi
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_b2cc8/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_b2cc8.dir/build.make CMakeFiles/cmTC_b2cc8.dir/build
+Building C object CMakeFiles/cmTC_b2cc8.dir/HAVE_SOCKET_H.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -fPIE -MD -MT CMakeFiles/cmTC_b2cc8.dir/HAVE_SOCKET_H.c.o -MF CMakeFiles/cmTC_b2cc8.dir/HAVE_SOCKET_H.c.o.d -o CMakeFiles/cmTC_b2cc8.dir/HAVE_SOCKET_H.c.o -c /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-Zk7LGi/HAVE_SOCKET_H.c
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-Zk7LGi/HAVE_SOCKET_H.c:2:10: fatal error: 'socket.h' file not found
+#include <socket.h>
+         ^~~~~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_b2cc8.dir/HAVE_SOCKET_H.c.o] Error 1
+make: *** [cmTC_b2cc8/fast] Error 2
+
+
+Source:
+/* */
+#include <socket.h>
+
+
+int main(void){return 0;}
+
+Determining if files stropts.h exist failed with the following output:
+Change Dir: /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-QceDdR
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_0009c/fast && /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_0009c.dir/build.make CMakeFiles/cmTC_0009c.dir/build
+Building C object CMakeFiles/cmTC_0009c.dir/HAVE_STROPTS_H.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc   -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -mmacosx-version-min=12.2 -fPIE -MD -MT CMakeFiles/cmTC_0009c.dir/HAVE_STROPTS_H.c.o -MF CMakeFiles/cmTC_0009c.dir/HAVE_STROPTS_H.c.o.d -o CMakeFiles/cmTC_0009c.dir/HAVE_STROPTS_H.c.o -c /Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-QceDdR/HAVE_STROPTS_H.c
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/grpc/cmake/build/CMakeFiles/CMakeScratch/TryCompile-QceDdR/HAVE_STROPTS_H.c:2:10: fatal error: 'stropts.h' file not found
+#include <stropts.h>
+         ^~~~~~~~~~~
+1 error generated.
+make[1]: *** [CMakeFiles/cmTC_0009c.dir/HAVE_STROPTS_H.c.o] Error 1
+make: *** [cmTC_0009c/fast] Error 2
+
+
+Source:
+/* */
+#include <stropts.h>
+
+
+int main(void){return 0;}
+
