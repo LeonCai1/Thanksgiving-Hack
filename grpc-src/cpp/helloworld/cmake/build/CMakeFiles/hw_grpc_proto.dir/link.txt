@@ -1,0 +1,2 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libhw_grpc_proto.a CMakeFiles/hw_grpc_proto.dir/helloworld.grpc.pb.cc.o CMakeFiles/hw_grpc_proto.dir/helloworld.pb.cc.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libhw_grpc_proto.a
