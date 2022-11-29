@@ -1,0 +1,21 @@
+{
+  "C_Cpp.errorSquiggles": "Disabled",
+  "files.associations": {
+    "*.json.liquid": "json",
+    "*.yaml.liquid": "yaml",
+    "*.md.liquid": "markdown",
+    "*.js.liquid": "liquid-javascript",
+    "*.css.liquid": "liquid-css",
+    "*.scss.liquid": "liquid-scss",
+    "set": "cpp",
+    "regex": "cpp",
+    "iosfwd": "cpp",
+    "__tree": "cpp",
+    "*.inc": "cpp",
+    "algorithm": "cpp",
+    "__locale": "cpp",
+    "ios": "cpp",
+    "vector": "cpp"
+  },
+  "cmake.sourceDirectory": "${workspaceFolder}/grpc"
+}
