@@ -1,0 +1,3 @@
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/cmake/build/CMakeFiles/CMakeScratch/TryCompile-YThhya/CMakeFiles/cmTC_8c117.dir
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/cmake/build/CMakeFiles/CMakeScratch/TryCompile-YThhya/CMakeFiles/edit_cache.dir
+/Users/jacksonchen/Documents/Github/temp/Thanksgiving-Hack/cmake/build/CMakeFiles/CMakeScratch/TryCompile-YThhya/CMakeFiles/rebuild_cache.dir
