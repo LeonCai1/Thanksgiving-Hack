@@ -28,25 +28,25 @@
 #include <grpcpp/grpcpp.h>
 
 #ifdef BAZEL_BUILD
-#include "examples/protos/helloworld.grpc.pb.h"
+#include "examples/protos/src.grpc.pb.h"
 #else
-#include "helloworld.grpc.pb.h"
+#include "src.grpc.pb.h"
 #endif
 
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
-using helloworld::Greeter;
-using helloworld::HelloReply;
-using helloworld::HelloRequest;
-using helloworld::ImageRequest;
-using helloworld::ImageResponse;
-using helloworld::RenderImageRequest;
-using helloworld::RenderImageResponse;
-using helloworld::SendResultRequest;
-using helloworld::SendResultResponse;
-using helloworld::TaskRequest;
-using helloworld::TaskResponse;
+using src::Greeter;
+using src::HelloReply;
+using src::HelloRequest;
+using src::ImageRequest;
+using src::ImageResponse;
+using src::RenderImageRequest;
+using src::RenderImageResponse;
+using src::SendResultRequest;
+using src::SendResultResponse;
+using src::TaskRequest;
+using src::TaskResponse;
 using namespace std;
 
 int main(int argc, char** argv) {

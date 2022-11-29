@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# cmake build file for C++ helloworld example.
+# cmake build file for C++ src example.
 # Assumes protobuf and gRPC have been installed using cmake.
 # See cmake_externalproject/CMakeLists.txt for all-in-one cmake build
-# that automatically builds all the dependencies before building helloworld.
+# that automatically builds all the dependencies before building src.
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(HelloWorld C CXX)
+project(Src C CXX)
 
 include(../cmake/common.cmake)
 
@@ -27,46 +27,44 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config.json
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # Proto file
-get_filename_component(hw_proto "../../protos/helloworld.proto" ABSOLUTE)
-get_filename_component(hw_proto_path "${hw_proto}" PATH)
+get_filename_component(src_proto "../../protos/src.proto" ABSOLUTE)
+get_filename_component(src_proto_path "${src_proto}" PATH)
 
 # Generated sources
-set(hw_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/helloworld.pb.cc")
-set(hw_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/helloworld.pb.h")
-set(hw_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/helloworld.grpc.pb.cc")
-set(hw_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/helloworld.grpc.pb.h")
+set(src_proto_srcs "${CMAKE_CURRENT_BINARY_DIR}/src.pb.cc")
+set(src_proto_hdrs "${CMAKE_CURRENT_BINARY_DIR}/src.pb.h")
+set(src_grpc_srcs "${CMAKE_CURRENT_BINARY_DIR}/src.grpc.pb.cc")
+set(src_grpc_hdrs "${CMAKE_CURRENT_BINARY_DIR}/src.grpc.pb.h")
 add_custom_command(
-      OUTPUT "${hw_proto_srcs}" "${hw_proto_hdrs}" "${hw_grpc_srcs}" "${hw_grpc_hdrs}"
+      OUTPUT "${src_proto_srcs}" "${src_proto_hdrs}" "${src_grpc_srcs}" "${src_grpc_hdrs}"
       COMMAND ${_PROTOBUF_PROTOC}
       ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
         --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
-        -I "${hw_proto_path}"
+        -I "${src_proto_path}"
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
-        "${hw_proto}"
-      DEPENDS "${hw_proto}")
+        "${src_proto}"
+      DEPENDS "${src_proto}")
 
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
-# hw_grpc_proto
-add_library(hw_grpc_proto
-  ${hw_grpc_srcs}
-  ${hw_grpc_hdrs}
-  ${hw_proto_srcs}
-  ${hw_proto_hdrs})
-target_link_libraries(hw_grpc_proto
+# src_grpc_proto
+add_library(src_grpc_proto
+  ${src_grpc_srcs}
+  ${src_grpc_hdrs}
+  ${src_proto_srcs}
+  ${src_proto_hdrs})
+target_link_libraries(src_grpc_proto
   ${_REFLECTION}
   ${_GRPC_GRPCPP}
   ${_PROTOBUF_LIBPROTOBUF})
 
 # Targets greeter_[async_](client|server)
 foreach(_target
-  greeter_client greeter_server 
-  greeter_callback_client greeter_callback_server 
-  greeter_async_client greeter_async_client2 greeter_async_server)
+  client server)
   add_executable(${_target} "${_target}.cc")
   target_link_libraries(${_target}
-    hw_grpc_proto
+    src_grpc_proto
     ${_REFLECTION}
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
